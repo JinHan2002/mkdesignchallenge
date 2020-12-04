@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Contact Form</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+    <script src="https://unpkg.com/react@latest/umd/react.development.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/react-dom@latest/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@material-ui/core@latest/umd/material-ui.development.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/babel-standalone@latest/babel.min.js" crossorigin="anonymous"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="615013844918-tqsa7s2m1k8quuji6a187pgvpv254r7d.apps.googleusercontent.com">
+    <!-- Fonts to support Material Design -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+    <!-- Icons to support Material Design -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+    const {
+        colors,
+        CssBaseline,
+        ThemeProvider,
+        TextField,
+        Button,
+        Typography,
+        Container,
+        makeStyles,
+        createMuiTheme,
+        Box,
+        SvgIcon,
+        Link,
+    } = MaterialUI;
+
+    // Create a theme instance.
+    const theme = createMuiTheme({
+        palette: {
+            primary: {
+                main: '#556cd6',
+            },
+            secondary: {
+                main: '#19857b',
+            },
+            error: {
+                main: colors.red.A400,
+            },
+            background: {
+                default: '#fff',
+            },
+        },
+    });
+    function Copyright() {
+        return (
+            <Typography variant="body2" color="textSecondary" align="center">
+                {'Copyright © MK Decision '}
+                <Link color="inherit" href="https://mkdecision.com/">
+                    MK Decision
+                </Link>{' '}
+                {new Date().getFullYear()}
+                {'.'}
+            </Typography>
+        );
+    }
+
+    function App() {
+        //Send email and connect to database
+        function callAPI (firstName,lastName,email,message){
+            //Form validation
+            if (firstName=="" || lastName=="" || email=="" || message=="")
+            {
+                alert("Please Fill All Required Field");
+                return false;
+            }
+            const emailRE = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            if (!emailRE.test(email)&&!email==""){
+                alert("Email Address entered is not valid");
+                return false;
+            }
+            let myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            let raw = JSON.stringify({"firstName":firstName,"lastName":lastName,"email":email,"message":message});
+            let requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+            //connect with AWS
+            fetch("https://cjraoxttr8.execute-api.us-east-2.amazonaws.com/dev", requestOptions)
+                .then(response => response.text())
+                .catch(error => console.log('error', error));
+            document.getElementById("contact-form").innerHTML = "<h1>Thank you for your message/feedback<br>You will receive an email from us soon!<p><a href=\"signOut.html\">Sign Out</a></p></h1> ";
+        }
+        return (
+            <Container maxWidth="sm">
+                <div style={{ marginTop: 24, }}>
+                    <form id="contact-form">
+                        <h2>Contact</h2>
+                        <TextField id="fName" fullWidth label="First Name" />
+                        <TextField id="lName" fullWidth label="Last Name" />
+                        <TextField id="email" fullWidth label="Email" />
+                        <TextField id="message" fullWidth label="Message " />
+                        <Button variant="contained"  onClick={() => callAPI(callAPI(document.getElementById('fName').value,document.getElementById('lName').value,document.getElementById('email').value,document.getElementById('message').value))} >Submit</Button>
+                    </form>
+                </div>
+                  <Copyright />
+            </Container>
+        );
+    }
+
+    ReactDOM.render(
+        <ThemeProvider theme={theme}>
+            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+            <CssBaseline />
+            <App />
+        </ThemeProvider>,
+        document.querySelector('#root'),
+    );
+
+</script>
+</body>
+</html>
