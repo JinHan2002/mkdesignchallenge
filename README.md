@@ -5,3 +5,4 @@
 * This project is an UX challenge designed by MK Decision. 
 * AWS Cognito User Pools and Social Media Sign in has been enabled. 
 * SSL (TLS 1.2) has been enabled 
+* To test the email function, please verify the email you want to test at AWS SES (Or send it to me) as this AWS account is non-production
